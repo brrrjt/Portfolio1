@@ -232,7 +232,7 @@ section {
 .activated .card-link {
     background-color: rgba(14, 46, 2, 0.9);
     padding: 1.5vw;
-    padding-bottom: 0;
+    padding-bottom: 0.5vw;
     border-radius: 50px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.3);
     border: 3px solid transparent;
