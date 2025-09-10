@@ -271,16 +271,19 @@ section {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
+    height: auto !important;
 }
 
 .swiper-wrapper {
     align-items: stretch;
+    height: auto !important;
 }
 
 .swiper-slide {
     height: auto;
     display: flex;
-    transition: transform 0.3s ease
+    transition: transform 0.3s ease;
+    padding: 0px;
 }
 
 .swiper-slide-active,
@@ -296,6 +299,8 @@ section {
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
+    width: 100% !important; /* Force full width */
+    min-height: 400px;
 }
 
 /* Navigation buttons positioned for 3-slide layout */
@@ -557,6 +562,11 @@ section {
     max-width: none;
 }
 
+#photoManipulationImages img, #socialsImages img, #jerseysImages img {
+    width: 30vw;
+    max-width: none;
+}
+
 .material-symbols-rounded {
     font-family: 'Material Symbols Rounded';
     font-weight: normal;
@@ -659,7 +669,7 @@ section {
     }
 
     .card-list .card-item .card-link {
-        width: 35vw;
+        width: 50vw;
     }
 
     .gallery .gallery-inner .image iframe {
@@ -695,7 +705,16 @@ section {
     .activated-tabs .activated .card-link {
         padding: 0 1.2em !important;
         padding-top: 0.8em !important;
+        padding-bottom: 0 !important;
         font-size: 1em;
+        height: 10vh !important;
+    }
+
+    .activated-tabs .activated .card-link .categories {
+        padding: 0 1.2em !important;
+        padding-top: 0.5em !important;
+        padding-bottom: 0 !important;
+        font-size: 2.7vw;
         height: 10vh !important;
     }
 

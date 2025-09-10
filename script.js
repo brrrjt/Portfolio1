@@ -32,11 +32,11 @@ let swiperInstances = {
     videoEditing: null
 };
 
-// Function to activate a tab and switch containers
 function activateTab(tab) {
     // Remove default tabs and show activated tabs
     defaultTabsContainer.style.display = 'none';
-    activatedTabsContainer.style.display = 'block';
+    activatedTabsContainer.style.display = 'flex'; // Changed to flex
+    activatedTabsContainer.style.justifyContent = 'center'; // Center the tabs
     
     // Remove active classes from all tab contents and hide them
     tabContents.forEach(content => {
@@ -63,118 +63,131 @@ function activateTab(tab) {
         targetContent.classList.add('active');
         targetContent.style.display = 'block';
         
-        // Initialize or update the swiper for this content
-        initializeOrUpdateSwiper(targetTabId);
-    }
-    
-    // Adjust the activated tab styling for perfect text fit
-    const activatedCardLinks = document.querySelectorAll('.activated .card-link');
-    activatedCardLinks.forEach(link => {
-        const categoriesText = link.querySelector('.categories');
-        if (categoriesText) {
-            const textHeight = categoriesText.scrollHeight;
-            link.style.height = (textHeight + 30) + 'px'; // 30px for padding
-            link.style.display = 'flex';
-            link.style.alignItems = 'center';
-            link.style.justifyContent = 'center';
-        }
-    });
-}
-
-// Initialize or update swiper for a specific tab
-function initializeOrUpdateSwiper(tabId) {
-    const targetContent = document.querySelector(tabId);
-    if (!targetContent) return;
-    
-    const swiperKey = tabId.replace('#', '');
-    
-    // Check if swiper already exists for this tab
-    if (!swiperInstances[swiperKey]) {
-        // Initialize new swiper
-        initializeSwiper(tabId);
-    } else {
-        // Update existing swiper
+        // Update swipers after a short delay to ensure DOM is updated
         setTimeout(() => {
-            const swiper = swiperInstances[swiperKey];
-            if (swiper) {
-                swiper.update();
-                swiper.slideTo(0); // Reset to first slide
-            }
+            if (graphicDesignSwiper) graphicDesignSwiper.update();
+            if (videoEditingSwiper) videoEditingSwiper.update();
         }, 100);
     }
 }
 
-// Initialize a specific swiper
-function initializeSwiper(tabId) {
-    const swiperKey = tabId.replace('#', '');
-    
-    const config = {
-        loop: true,
-        slidesPerView: 3,
-        spaceBetween: 25,
-        centeredSlides: false, // Important: set to false to show all 3 slides
-        watchSlidesProgress: true,
-        
-        // Navigation arrows
-        navigation: {
-            nextEl: `${tabId} .swiper-button-next`,
-            prevEl: `${tabId} .swiper-button-prev`,
+new Swiper('.card-wrapper', {
+    loop: true,
+    spaceBetween: 30,
+
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        dynamicBullets: true
+    },
+
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+    },
+
+    breakpoints: {
+        0: {
+            slidesPerView: 1
         },
-        
-        // Pagination
-        pagination: {
-            el: `${tabId} .swiper-pagination`,
-            clickable: true,
-            dynamicBullets: true,
+        768: {
+            slidesPerView: 2
         },
-        
-        // Breakpoints
-        breakpoints: {
-            // Mobile first
-            0: {
-                slidesPerView: 1,
-                spaceBetween: 15,
-                centeredSlides: true
-            },
-            640: {
-                slidesPerView: 1.5,
-                spaceBetween: 15,
-                centeredSlides: true
-            },
-            768: {
-                slidesPerView: 2,
-                spaceBetween: 20,
-                centeredSlides: false
-            },
-            1024: {
-                slidesPerView: 3,
-                spaceBetween: 25,
-                centeredSlides: false // Don't center on desktop
-            },
-            1280: {
-                slidesPerView: 3,
-                spaceBetween: 30,
-                centeredSlides: false
-            }
+        1024: {
+            slidesPerView: 3
         }
-    };
-    
-    swiperInstances[swiperKey] = new Swiper(`${tabId}.swiper`, config);
-    
-    // Fix for slide movement - update after initialization
-    setTimeout(() => {
-        if (swiperInstances[swiperKey]) {
-            // Multiple updates to ensure proper initialization
-            swiperInstances[swiperKey].update();
-            swiperInstances[swiperKey].updateSlides();
-            swiperInstances[swiperKey].updateSize();
-            swiperInstances[swiperKey].updateSlidesClasses();
-            
-            // Reset to first slide
-            swiperInstances[swiperKey].slideTo(0, 0);
-        }
-    }, 300);
+    }
 }
+)
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize swipers only when their containers are visible
+    let graphicDesignSwiper = null;
+    let videoEditingSwiper = null;
+
+    function initializeSwipers() {
+        // Initialize Graphic Design swiper if not already initialized
+        const graphicDesignElement = document.querySelector('#graphicDesign.swiper');
+        if (graphicDesignElement && !graphicDesignSwiper) {
+            graphicDesignSwiper = new Swiper('#graphicDesign.swiper', {
+                loop: true,
+                spaceBetween: 30,
+                slidesPerView: 1,
+                centeredSlides: false,
+                
+                pagination: {
+                    el: '#graphicDesign .swiper-pagination',
+                    clickable: true,
+                    dynamicBullets: true
+                },
+
+                navigation: {
+                    nextEl: '#graphicDesign .swiper-button-next',
+                    prevEl: '#graphicDesign .swiper-button-prev'
+                },
+
+                breakpoints: {
+                    0: {
+                        slidesPerView: 1
+                    },
+                    768: {
+                        slidesPerView: 2
+                    },
+                    1024: {
+                        slidesPerView: 3
+                    }
+                }
+            });
+        }
+
+        // Initialize Video Editing swiper if not already initialized
+        const videoEditingElement = document.querySelector('#videoEditing.swiper');
+        if (videoEditingElement && !videoEditingSwiper) {
+            videoEditingSwiper = new Swiper('#videoEditing.swiper', {
+                loop: true,
+                spaceBetween: 30,
+                slidesPerView: 1,
+                centeredSlides: false,
+                
+                pagination: {
+                    el: '#videoEditing .swiper-pagination',
+                    clickable: true,
+                    dynamicBullets: true
+                },
+
+                navigation: {
+                    nextEl: '#videoEditing .swiper-button-next',
+                    prevEl: '#videoEditing .swiper-button-prev'
+                },
+
+                breakpoints: {
+                    0: {
+                        slidesPerView: 1
+                    },
+                    768: {
+                        slidesPerView: 2
+                    },
+                    1024: {
+                        slidesPerView: 3
+                    }
+                }
+            });
+        }
+    }
+
+    // Initialize swipers on page load
+    initializeSwipers();
+
+    // Update swipers when tabs are switched
+    document.querySelectorAll('[data-tab-target]').forEach(tab => {
+        tab.addEventListener('click', function() {
+            setTimeout(() => {
+                if (graphicDesignSwiper) graphicDesignSwiper.update();
+                if (videoEditingSwiper) videoEditingSwiper.update();
+            }, 300);
+        });
+    });
+});
 
 // Add click event to default tabs
 document.querySelectorAll('.default-tabs [data-tab-target]').forEach(tab => {
@@ -288,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const shortsSetup = setupGallery("openShorts", "closeShorts", "shorts");
     const socialsSetup = setupGallery("openSocials", "closeSocials", "socials");
     const editsSetup = setupGallery("openEdits", "closeEdits", "edits");
+    const photoManipulationSetup = setupGallery("openPhotoManipulation", "closePhotoManipulation", "photoManipulation");
 
     console.log("Gallery setup results:", {
         jerseys: jerseysSetup,
@@ -298,11 +312,12 @@ document.addEventListener('DOMContentLoaded', function() {
         promotionals: promotionalsSetup,
         shorts: shortsSetup,
         socials: socialsSetup,
-        edits: editsSetup
+        edits: editsSetup,
+        photoManipulation: photoManipulationSetup
     });
     
     // Alternative: Simple event delegation approach if above doesn't work
-    if (!filmsSetup || !logosSetup || !postersSetup || !printsSetup || !promotionalsSetup || !shortsSetup || !socialsSetup || !editsSetup) {
+    if (!filmsSetup || !logosSetup || !postersSetup || !printsSetup || !promotionalsSetup || !shortsSetup || !socialsSetup || !editsSetup || !photoManipulationSetup) {
         console.log("Trying alternative approach...");
         
         // Add click listeners to all card buttons
@@ -321,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (this.id === 'openShorts') galleryId = 'shorts';
                 if (this.id === 'openSocials') galleryId = 'socials';
                 if (this.id === 'openEdits') galleryId = 'edits';
+                if (this.id === 'openPhotoManipulation') galleryId = 'photoManipulation';
 
                 if (galleryId) {
                     const gallery = document.getElementById(galleryId);
